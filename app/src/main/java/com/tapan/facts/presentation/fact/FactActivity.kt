@@ -4,6 +4,8 @@ import android.os.Bundle
 import android.view.View
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.tapan.facts.R
+import com.tapan.facts.data.models.Fact
+import com.tapan.facts.data.models.FactsRS
 import com.tapan.facts.observe
 import com.tapan.facts.presentation.core.BaseActivity
 import com.tapan.facts.presentation.fact.adapter.FactAdapter
@@ -53,16 +55,30 @@ class FactActivity : BaseActivity<FactViewModel>() {
         }
         observe(getViewModel().getFactsLiveData()) {
             it?.apply {
-                (rvFacts.adapter as? FactAdapter)?.apply {
-                    val filterList = facts.filter {
-                        !(it.description == null &&
-                                it.title == null &&
-                                it.imageHref == null)
+            updateViews(this)
 
-                    }
-                    setList(filterList)
-                }
             }
+        }
+    }
+
+    private fun updateViews(factsRS: FactsRS) {
+        updateAdapterData(factsRS.facts)
+        setActionbarTitle(factsRS.title)
+    }
+
+    private fun setActionbarTitle(title: String) {
+        supportActionBar?.title = title
+    }
+
+    private fun updateAdapterData(facts: List<Fact>) {
+        (rvFacts.adapter as? FactAdapter)?.apply {
+            val filterList = facts.filter {
+                !(it.description == null &&
+                        it.title == null &&
+                        it.imageHref == null)
+
+            }
+            setList(filterList)
         }
     }
 
