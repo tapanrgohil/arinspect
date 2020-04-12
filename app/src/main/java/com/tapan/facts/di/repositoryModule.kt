@@ -9,5 +9,5 @@ import org.koin.dsl.module
  * Injecting repositories
  */
 val repositorySourceModule = module {
-    single<FactRepository> { FactRepositoryImpl() }
+    single<FactRepository> { FactRepositoryImpl(get()) }
 }

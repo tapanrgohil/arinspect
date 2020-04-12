@@ -1,8 +1,8 @@
 package com.tapan.facts.di
 
 
-import com.google.gson.GsonBuilder
 import com.tapan.facts.BuildConfig
+import com.tapan.facts.data.repository.FactNetworkService
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import org.koin.dsl.module
@@ -15,8 +15,9 @@ import java.util.concurrent.TimeUnit
  */
 val networkModule = module {
     single { createOkHttpClient() }
-
     single { createRetrofit(get(), BuildConfig.BASE_URL) }
+    single { createNetworkService<FactNetworkService>(get()) }
+
 }
 
 fun createOkHttpClient(): OkHttpClient {
@@ -44,6 +45,6 @@ fun createRetrofit(okHttpClient: OkHttpClient, url: String): Retrofit {
 
 }
 
-inline fun <reified T> createWebService(retrofit: Retrofit): T {
+inline fun <reified T> createNetworkService(retrofit: Retrofit): T {
     return retrofit.create(T::class.java)
 }
