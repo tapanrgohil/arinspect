@@ -1,4 +1,4 @@
-package com.tapan.facts.presentation
+package com.tapan.facts.presentation.core
 
 import android.os.Build
 import android.os.Bundle
