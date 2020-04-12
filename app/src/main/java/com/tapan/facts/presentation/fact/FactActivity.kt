@@ -31,7 +31,6 @@ class FactActivity : BaseActivity<FactViewModel>() {
     }
 
 
-
     private fun setupSwipeRefresh() {
         swipeRefresh.setOnRefreshListener {
             getViewModel().getFacts()
@@ -40,9 +39,13 @@ class FactActivity : BaseActivity<FactViewModel>() {
 
     override fun attachLiveData() {
         observe(getViewModel().progressLiveData) {
-            swipeRefresh.isRefreshing = it == true
+            setProgressAndError(it)
         }
 
+        observe(getViewModel().errorLiveData) {
+            if (rvFacts.adapter?.itemCount == 0)
+                cvNodata.visibility = View.VISIBLE
+        }
         observe(getViewModel().getFactsLiveData()) {
             it?.apply {
                 (rvFacts.adapter as? FactAdapter)?.apply {
@@ -55,6 +58,15 @@ class FactActivity : BaseActivity<FactViewModel>() {
                     setList(filterList)
                 }
             }
+        }
+    }
+
+    private fun setProgressAndError(it: Boolean?) {
+        if (it == true) {
+            swipeRefresh.isRefreshing = true
+            cvNodata.visibility = View.GONE
+        } else {
+            swipeRefresh.isRefreshing = false
         }
     }
 }
