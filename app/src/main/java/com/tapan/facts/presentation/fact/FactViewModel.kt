@@ -9,6 +9,7 @@ import org.koin.core.inject
 
 class FactViewModel : BaseViewModel() {
 
+    var firstVisibleItem: Int = 0
     private val factRepo by inject<FactRepository>()
     private val factsLiveData by lazy { MutableLiveData<FactsRS>() }
 

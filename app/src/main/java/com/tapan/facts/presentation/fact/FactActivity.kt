@@ -1,7 +1,9 @@
 package com.tapan.facts.presentation.fact
 
+import android.content.res.Configuration
 import android.os.Bundle
 import android.view.View
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.tapan.facts.R
 import com.tapan.facts.data.models.Fact
@@ -21,12 +23,30 @@ class FactActivity : BaseActivity<FactViewModel>() {
         setUpTryAgainClick()
         setupAdapter()
 
-        getViewModel().getFacts()
+        if (savedInstanceState == null) {
+            getViewModel().getFacts()
+        } else {
+            restoreState()
+
+        }
+    }
+
+    private fun restoreState() {
+        getViewModel().getFactsLiveData().value?.apply {
+            updateViews(this)
+            scrollToLastPosition()
+        }
     }
 
     private fun setupAdapter() {
         rvFacts?.apply {
-            layoutManager = LinearLayoutManager(context)
+            val orientation = resources.configuration.orientation
+            if (orientation == Configuration.ORIENTATION_PORTRAIT) {
+                layoutManager = LinearLayoutManager(context)
+
+            } else {
+                layoutManager = GridLayoutManager(context, 2)
+            }
             adapter = FactAdapter()
         }
     }
@@ -55,7 +75,7 @@ class FactActivity : BaseActivity<FactViewModel>() {
         }
         observe(getViewModel().getFactsLiveData()) {
             it?.apply {
-            updateViews(this)
+                updateViews(this)
 
             }
         }
@@ -89,5 +109,17 @@ class FactActivity : BaseActivity<FactViewModel>() {
         } else {
             swipeRefresh.isRefreshing = false
         }
+    }
+
+    private fun scrollToLastPosition() {
+        rvFacts.scrollToPosition(getViewModel().firstVisibleItem)
+    }
+
+    private fun getFirstVisiblePosition() =
+        (rvFacts.layoutManager as? LinearLayoutManager)?.findFirstVisibleItemPosition() ?: 0
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        getViewModel().firstVisibleItem = getFirstVisiblePosition()
+        super.onSaveInstanceState(outState)
     }
 }
