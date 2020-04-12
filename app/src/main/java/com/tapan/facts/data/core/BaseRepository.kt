@@ -8,7 +8,7 @@ import java.net.UnknownHostException
  * Base repository super class for all repository contains methods for wrapping API calls in Either
  */
 open class BaseRepository {
-    suspend fun <R> either(
+    suspend fun <R> executeSafeApiCall(
         autoHandle: Boolean = true,
         data: suspend () -> R
     ): Either<MyException, R> {
