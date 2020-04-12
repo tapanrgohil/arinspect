@@ -2,6 +2,7 @@ package com.tapan.facts.presentation.fact
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.View
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.tapan.facts.R
 import com.tapan.facts.observe
@@ -15,16 +16,33 @@ class FactActivity : BaseActivity<FactViewModel>() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_fact)
-        rvFacts?.apply {
-            val orientation = resources.configuration.orientation
 
-            layoutManager = LinearLayoutManager(context)
-            adapter = FactAdapter()
-        }
+        setupSwipeRefresh()
+        setupAdapter()
+
         getViewModel().getFacts()
     }
 
+    private fun setupAdapter() {
+        rvFacts?.apply {
+            layoutManager = LinearLayoutManager(context)
+            adapter = FactAdapter()
+        }
+    }
+
+
+
+    private fun setupSwipeRefresh() {
+        swipeRefresh.setOnRefreshListener {
+            getViewModel().getFacts()
+        }
+    }
+
     override fun attachLiveData() {
+        observe(getViewModel().progressLiveData) {
+            swipeRefresh.isRefreshing = it == true
+        }
+
         observe(getViewModel().getFactsLiveData()) {
             it?.apply {
                 (rvFacts.adapter as? FactAdapter)?.apply {
