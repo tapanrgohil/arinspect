@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">arinspect</string>
+    <string name="connection_error">Connection error</string>
+</resources>
