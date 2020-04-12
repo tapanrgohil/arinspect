@@ -1,13 +1,11 @@
 package com.tapan.facts.presentation.fact
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.tapan.facts.R
 import com.tapan.facts.observe
 import com.tapan.facts.presentation.core.BaseActivity
-import com.tapan.facts.presentation.core.BaseViewModel
 import com.tapan.facts.presentation.fact.adapter.FactAdapter
 import kotlinx.android.synthetic.main.activity_fact.*
 
@@ -18,6 +16,7 @@ class FactActivity : BaseActivity<FactViewModel>() {
         setContentView(R.layout.activity_fact)
 
         setupSwipeRefresh()
+        setUpTryAgainClick()
         setupAdapter()
 
         getViewModel().getFacts()
@@ -30,6 +29,12 @@ class FactActivity : BaseActivity<FactViewModel>() {
         }
     }
 
+
+    private fun setUpTryAgainClick() {
+        btTryAgain.setOnClickListener {
+            getViewModel().getFacts()
+        }
+    }
 
     private fun setupSwipeRefresh() {
         swipeRefresh.setOnRefreshListener {
