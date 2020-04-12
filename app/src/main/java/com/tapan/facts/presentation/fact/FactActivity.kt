@@ -12,6 +12,7 @@ import com.tapan.facts.observe
 import com.tapan.facts.presentation.core.BaseActivity
 import com.tapan.facts.presentation.core.BaseViewModel
 import com.tapan.facts.presentation.fact.adapter.FactAdapter
+import com.tapan.facts.visible
 import kotlinx.android.synthetic.main.activity_fact.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -75,7 +76,7 @@ class FactActivity : BaseActivity<FactViewModel>() {
 
         observe(getViewModel().errorLiveData) {
             if (rvFacts.adapter?.itemCount == 0)
-                cvNodata.visibility = View.VISIBLE
+                toggleNoData(true)
         }
         observe(getViewModel().getFactsLiveData()) {
             it?.apply {
@@ -109,10 +110,15 @@ class FactActivity : BaseActivity<FactViewModel>() {
     private fun setProgressAndError(it: Boolean?) {
         if (it == true) {
             swipeRefresh.isRefreshing = true
-            cvNodata.visibility = View.GONE
+            toggleNoData(false)
         } else {
             swipeRefresh.isRefreshing = false
         }
+    }
+
+    private fun toggleNoData(isVisible: Boolean) {
+        cvNodata.visible(isVisible)
+        rvFacts.visible(!isVisible)
     }
 
     private fun scrollToLastPosition() {
@@ -127,5 +133,5 @@ class FactActivity : BaseActivity<FactViewModel>() {
         super.onSaveInstanceState(outState)
     }
 
-    override fun getViewModel()= factViewModel
+    override fun getViewModel() = factViewModel
 }

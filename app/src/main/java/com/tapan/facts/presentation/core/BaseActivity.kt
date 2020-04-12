@@ -15,8 +15,6 @@ import java.lang.reflect.ParameterizedType
 
 abstract class BaseActivity<T : BaseViewModel> : AppCompatActivity() {
     abstract fun getViewModel(): T
-
-
     abstract fun attachLiveData()
 
 

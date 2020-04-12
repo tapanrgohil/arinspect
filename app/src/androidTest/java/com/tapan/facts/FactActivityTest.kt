@@ -4,8 +4,10 @@ import android.view.View
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.MutableLiveData
 import androidx.recyclerview.widget.RecyclerView
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.espresso.Espresso
+import androidx.test.espresso.assertion.ViewAssertions
 import androidx.test.espresso.matcher.ViewMatchers
 import androidx.test.filters.LargeTest
 import androidx.test.rule.ActivityTestRule
@@ -40,20 +42,27 @@ class FactActivityTest : AutoCloseKoinTest() {
     @get:Rule
     val activityRule = ActivityTestRule(FactActivity::class.java, true, true)
 
+    /**
+     * Load data and check recycler view has loaded data,progress bar(Swipe refresh) has gone, and no data view is not dispaying
+     */
     @Test
     public fun testLoadData() {
 
         Thread.sleep(1500)
-        Espresso.onView(ViewMatchers.withId(R.id.rvFacts))
-            .check { view, noViewFoundException ->
-                assert(view.visibility == View.VISIBLE)
-                assert(getRVcount()>0)
-            }
 
+
+        assert(getRVcount() > 0)
+        activityRule.activity.findViewById<SwipeRefreshLayout>(R.id.swipeRefresh)?.apply {
+            assert(!isRefreshing)
+        }
         Espresso.onView(ViewMatchers.withId(R.id.cvNodata))
-            .check { view, noViewFoundException ->
-                assert(view.visibility == View.GONE)
-            }
+            .check(
+                ViewAssertions.matches(
+                    ViewMatchers.withEffectiveVisibility(ViewMatchers.Visibility.GONE)
+                )
+            )
+
+
     }
 
     private fun getRVcount(): Int {
