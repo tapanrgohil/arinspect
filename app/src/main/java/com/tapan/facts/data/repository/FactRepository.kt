@@ -10,11 +10,22 @@ interface FactRepository {
     suspend fun getFacts(): Either<MyException, FactsRS>
 }
 
-class FactRepositoryImpl(private val networkService: FactNetworkService) : BaseRepository(),
+class FactRepositoryImpl(private val factRemoteSource: FactRemoteSource) : BaseRepository(),
     FactRepository {
     override suspend fun getFacts() = executeSafeApiCall {
-        networkService.getFacts()
+        factRemoteSource.getFactsFromRemote()
     }
+}
+
+public  abstract class FactRemoteSource {
+    abstract suspend fun getFactsFromRemote(): FactsRS
+}
+
+class FactRemoteSourceImpl(val factNetworkService: FactNetworkService) : FactRemoteSource() {
+    override suspend fun getFactsFromRemote(): FactsRS {
+        return factNetworkService.getFacts()
+    }
+
 }
 
 interface FactNetworkService {

@@ -14,16 +14,7 @@ import com.tapan.facts.data.core.MyException
 import java.lang.reflect.ParameterizedType
 
 abstract class BaseActivity<T : BaseViewModel> : AppCompatActivity() {
-
-    private lateinit var baseViewModel: T
-
-    open fun getViewModel(): T {
-        if (!::baseViewModel.isInitialized) {
-            baseViewModel = ViewModelProvider(this)
-                .get((this.javaClass.genericSuperclass as ParameterizedType).actualTypeArguments[0] as Class<T>)
-        }
-        return baseViewModel
-    }
+    abstract fun getViewModel(): T
 
 
     abstract fun attachLiveData()
@@ -43,10 +34,9 @@ abstract class BaseActivity<T : BaseViewModel> : AppCompatActivity() {
         super.onResume()
 
 
-        baseViewModel = getViewModel()
 
-        baseViewModel.errorLiveData.observe(this, Observer {
-            baseViewModel.changeProgress(false)
+        getViewModel().errorLiveData.observe(this, Observer {
+            getViewModel().changeProgress(false)
             it?.apply {
                 if (it is MyException) {
                     when (it) {
@@ -74,7 +64,7 @@ abstract class BaseActivity<T : BaseViewModel> : AppCompatActivity() {
                 } else {
                     Log.e("Error", it.localizedMessage, it)
                 }
-                baseViewModel.resetErrorLiveData()
+                getViewModel().resetErrorLiveData()
             }
         })
         attachLiveData()

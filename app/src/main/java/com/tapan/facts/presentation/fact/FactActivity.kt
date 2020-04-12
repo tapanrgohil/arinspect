@@ -10,10 +10,14 @@ import com.tapan.facts.data.models.Fact
 import com.tapan.facts.data.models.FactsRS
 import com.tapan.facts.observe
 import com.tapan.facts.presentation.core.BaseActivity
+import com.tapan.facts.presentation.core.BaseViewModel
 import com.tapan.facts.presentation.fact.adapter.FactAdapter
 import kotlinx.android.synthetic.main.activity_fact.*
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class FactActivity : BaseActivity<FactViewModel>() {
+
+    private val factViewModel by viewModel<FactViewModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -122,4 +126,6 @@ class FactActivity : BaseActivity<FactViewModel>() {
         getViewModel().firstVisibleItem = getFirstVisiblePosition()
         super.onSaveInstanceState(outState)
     }
+
+    override fun getViewModel()= factViewModel
 }
